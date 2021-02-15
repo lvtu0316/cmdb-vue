@@ -15,7 +15,7 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="设备类型">
+          <el-form-item label="设备型号">
             <el-input v-model="form_base.device_model" :readonly="is_Readonly" style="width: 300px;"/>
           </el-form-item>
         </el-col>
@@ -28,7 +28,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="位置">
-            <el-input v-model="form_base.location" :readonly="is_Readonly" style="width: 300px;"/>
+            <el-input v-model="form_base.position" :readonly="is_Readonly" style="width: 300px;"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -47,7 +47,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="CPU型号">
-            <el-input v-model="form_base.sys_cpu_model" :readonly="is_Readonly" style="width: 300px;"/>
+            <el-input v-model="form_base.cpu_model" :readonly="is_Readonly" style="width: 300px;"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">

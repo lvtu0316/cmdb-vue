@@ -23,12 +23,16 @@
       </el-table-column>
       <el-table-column label="设备类型" width="120">
         <template slot-scope="scope">
-          <el-tag v-for="item in scope.row.device_type" :key="item.id" size="device_type" style="display: inline-block;margin: 0px 2px;">{{ item.name }}</el-tag>
+          <el-tag v-if="scope.row.device_type === 'virtual'"  size="device_type" style="display: inline-block;margin: 0px 2px;">虚拟机</el-tag>
+          <el-tag v-else-if="scope.row.device_type === 'physical'"  size="device_type" style="display: inline-block;margin: 0px 2px;">物理机</el-tag>
+          <el-tag v-else-if="scope.row.device_type === 'other'"  size="device_type" style="display: inline-block;margin: 0px 2px;">其他</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="网络类型" width="120">
         <template slot-scope="scope">
-          <el-tag type="success" v-for="item in scope.row.network_type" :key="item.id" size="device_type" style="display: inline-block;margin: 0px 2px;">{{ item.name }}</el-tag>
+          <el-tag type="success" v-if="scope.row.network_type === 'gongan'" size="device_type" style="display: inline-block;margin: 0px 2px;">公安网</el-tag>
+          <el-tag type="success" v-else-if="scope.row.network_type === 'internet'" size="device_type" style="display: inline-block;margin: 0px 2px;">互联网</el-tag>
+          <el-tag type="success" v-else-if="scope.row.network_type === 'shipin'" size="device_type" style="display: inline-block;margin: 0px 2px;">视频专网</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="标签" width="120">
@@ -39,8 +43,11 @@
       <el-table-column prop="os_version" label="系统版本"/>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
-          <span v-if="scope.row.status == 'online'" style="color:#00CC00">在线</span>
-          <span v-else style="color:red">下线</span>
+          <span v-if="scope.row.status == 'using'" style="color:#00CC00">使用中</span>
+          <span v-else-if="scope.row.status == 'stopping'" style="color:#789262">已停用</span>
+          <span v-else-if="scope.row.status == 'repairing'" style="color:#789262">维修中</span>
+          <span v-else-if="scope.row.status == 'reserve'" style="color:#789262">备用</span>
+          <span v-else-if="scope.row.status == 'dumping'" style="color:#789262">报废</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="150px" align="center">

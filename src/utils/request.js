@@ -42,7 +42,7 @@ service.interceptors.response.use(
     if (code < 200 || code > 300) {
       Notification.error({
         title: '错误',
-        message: response.detail
+        message: response.data
       })
       return Promise.reject('error')
     } else {
@@ -84,7 +84,7 @@ service.interceptors.response.use(
         message: '后端服务器连接失败!'
       })
     } else {
-      const errorMsg = error.response.data.detail
+      const errorMsg = error.response.data.data
       if (errorMsg !== undefined) {
         Notification.error({
           title: '错误',

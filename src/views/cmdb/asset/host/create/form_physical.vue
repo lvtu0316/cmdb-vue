@@ -15,7 +15,7 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="设备类型">
+          <el-form-item label="设备型号">
             <el-input v-model="form_base.device_model" style="width: 300px;"/>
           </el-form-item>
         </el-col>
@@ -28,7 +28,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="位置">
-            <el-input v-model="form_base.location" style="width: 300px;"/>
+            <el-input v-model="form_base.position" style="width: 300px;"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -47,7 +47,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="CPU型号">
-            <el-input v-model="form_base.sys_cpu_model" style="width: 300px;"/>
+            <el-input v-model="form_base.cpu_model" style="width: 300px;"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -113,10 +113,8 @@
       </el-row>
       <el-form-item>
         <div style="display: inline-block;margin: 20px 0px;float: left">
-          <el-button v-if="checkPermission(['admin','host_all','host_edit']) && button == 'edit'" type="primary" @click="edit">编辑</el-button>
-          <el-button v-if="checkPermission(['admin','host_all','host_edit']) && button == 'save'" type="success" @click="doSubmit">保存</el-button>
-          <el-button v-if="checkPermission(['admin','host_all','host_edit']) && button == 'save'" type="warning" @click="cancel">取消</el-button>
-          <el-button v-if="checkPermission(['admin','host_all','host_edit']) && button == 'edit'" @click="closeTag">返回</el-button>
+          <el-button v-if="checkPermission(['admin','host_all','host_create']) && button == 'save'" type="success" @click="doSubmit">保存</el-button>
+          <el-button v-if="checkPermission(['admin','host_all','host_create']) && button == 'save'" @click="closeTag">返回</el-button>
         </div>
       </el-form-item>
     </el-form>
@@ -125,37 +123,53 @@
 
 <script>
 import checkPermission from '@/utils/permission'
-import { retrieve, edit } from '@/api/device'
+import { add } from '@/api/device'
 import { getCabinets } from '@/api/cabinet'
 export default {
   name: 'Physical',
   props: {
-    form_base: {}
+    form_base:{
+        name: '',
+        ip: '',
+        use_department: '',
+        leader: '',
+        leader_phone: '',
+        ops_department: '',
+        ops_leader: '',
+        ops_leader_phone: '',
+        status: '',
+        os_version: '',
+        os_type: '',
+        device_type: '',
+        warranty_date: null,
+        online_date: null,
+        offline_date: null,
+        businesses: [],
+        groups: [],
+        labels: [],
+        brand: '',
+        sn: '',
+        device_model: '',
+        supplier: '',
+        position: '',
+        cabinet: '',
+        sys_cpu_model: '',
+        cpu_number: 0,
+        cpu_core: 0,
+        memory_model: '',
+        memory_brand: '',
+        memory_num: 0,
+        memory_size: 0,
+        disk_size: 0,
+        disk_num: 0,
+        net_card_info: '',
+        error_message: ''
+      }
   },
   data() {
     return {
       loading: false,
-      button: 'edit',
-      // form_base: {
-      //   id: '',
-      //   brand: '',
-      //   sn: '',
-      //   device_model: '',
-      //   supplier: '',
-      //   position: '',
-      //   cabinet: '',
-      //   sys_cpu_model: '',
-      //   cpu_number: '',
-      //   cpu_core: '',
-      //   memory_model: '',
-      //   memory_brand: '',
-      //   memory_num: '',
-      //   memory_size: '',
-      //   disk_size: '',
-      //   disk_num: '',
-      //   net_card_info: '',
-      //   error_message: ''
-      // },
+      button: 'save',
       is_Readonly: true,
       cabinet_list: []
     }
@@ -169,14 +183,7 @@ export default {
   methods: {
     checkPermission,
     init() {
-      var pro
-      retrieve(this.$route.query.id).then(res => {
-        for (pro in this.form_base) {
-          this.form_base[pro] = res[pro]
-        }
-        
-
-      })
+      
       this.getAllCabinets()
       
     },
@@ -184,30 +191,21 @@ export default {
       this.$store.dispatch('delView', this.$store.state.tagsView.visitedViews.slice(-1)[0])
       this.$router.go(-1)
     },
-    cancel() {
-      this.button = 'edit'
-      this.is_Readonly = true
-    },
-    edit() {
-      this.button = 'save'
-      this.is_Readonly = false
-    },
+    
     doSubmit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           this.loading = true
-          edit(this.form_base.id, this.form_base).then(res => {
+          add(this.form_base).then(res => {
             // this.resetForm()
             this.$message({
               showClose: true,
               type: 'success',
-              message: '修改成功!',
+              message: '添加成功!',
               duration: 2500
             })
             this.loading = false
-            this.is_Readonly = true
-            this.button = 'edit'
-            this.init()
+            this.$router.push('/cmdb/asset/hosts')
           }).catch(err => {
             this.loading = false
             console.log(err.response.data.data)
@@ -215,28 +213,7 @@ export default {
         }
       })
     },
-    resetForm() {
-      // this.$refs['form_base'].resetFields()
-      this.form_base = {
-        brand: '',
-        sn: '',
-        device_model: '',
-        supplier: '',
-        position: '',
-        cabinet: '',
-        sys_cpu_model: '',
-        cpu_number: '',
-        cpu_core: '',
-        memory_model: '',
-        memory_brand: '',
-        memory_num: '',
-        memory_size: '',
-        disk_size: '',
-        disk_num: '',
-        net_card_info: '',
-        error_message: ''
-      }
-    },
+   
     getAllCabinets() {
       if (Array.isArray(this.cabinet_list) && this.cabinet_list.length === 0) {
         getCabinets().then(res => {

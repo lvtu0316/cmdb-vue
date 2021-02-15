@@ -16,7 +16,7 @@
           :loading="updateLoading"
           class="filter-item"
           size="mini"
-          type="warning"
+          type="success"
           @click="toCreate()"
           icon="el-icon-plus">新增</el-button>
       </el-button-group>
